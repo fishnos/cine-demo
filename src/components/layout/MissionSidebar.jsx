@@ -10,8 +10,8 @@ const Toggle = ({ enabled, onChange, label }) => (
       onClick={() => onChange(!enabled)}
       style={{
         width: 40, height: 22, borderRadius: 11,
-        background: enabled ? 'var(--purple)' : 'rgba(255,255,255,0.08)',
-        border: `1px solid ${enabled ? 'rgba(168,85,247,0.5)' : 'var(--border)'}`,
+        background: enabled ? 'var(--violet)' : 'rgba(255,255,255,0.08)',
+        border: `1px solid ${enabled ? 'rgba(139,92,246,0.6)' : 'var(--border)'}`,
         display: 'flex', alignItems: 'center', padding: 2,
         cursor: 'pointer', transition: 'background 0.2s, border-color 0.2s',
       }}
@@ -29,7 +29,7 @@ const Slider = ({ label, value, min, max, step, onChange, unit }) => (
   <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
       <span style={{ fontSize: 11, color: 'var(--text-3)', letterSpacing: '0.08em' }}>{label}</span>
-      <span style={{ fontSize: 12, color: 'var(--orange)', fontWeight: 600 }}>{value}{unit}</span>
+      <span style={{ fontSize: 12, color: 'var(--cyan)', fontWeight: 600 }}>{value}{unit}</span>
     </div>
     <input type="range" min={min} max={max} step={step} value={value}
       onChange={e => onChange(Number(e.target.value))} />
@@ -44,25 +44,33 @@ const WaypointCard = ({ wp, index, onChange, onRemove }) => (
     exit={{ opacity: 0, y: -6 }}
     transition={{ duration: 0.18 }}
     style={{
-      background: 'rgba(255,255,255,0.03)',
+      background: 'rgba(139,92,246,0.08)',
       border: '1px solid var(--border)',
       borderRadius: 10, padding: '10px 12px',
       display: 'flex', flexDirection: 'column', gap: 8,
     }}
   >
     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-      <span style={{ fontSize: 11, color: 'var(--orange)', fontWeight: 600, letterSpacing: '0.06em' }}>
+      <span style={{ fontSize: 11, color: 'var(--violet)', fontWeight: 600, letterSpacing: '0.06em' }}>
         WP {index + 1}
       </span>
-      <button onClick={() => onRemove(wp.id)} style={{ fontSize: 15, color: 'var(--text-3)', lineHeight: 1, padding: '0 2px' }}>
+      <button
+        onClick={() => onRemove(wp.id)}
+        style={{ fontSize: 15, color: 'var(--text-3)', lineHeight: 1, padding: '0 2px' }}
+      >
         ×
       </button>
     </div>
     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 6 }}>
       {['x', 'y', 'z'].map(axis => (
         <div key={axis} style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-          <span style={{ fontSize: 9, color: 'var(--text-3)', letterSpacing: '0.12em', textTransform: 'uppercase' }}>{axis}</span>
-          <input type="number" value={wp[axis]} onChange={e => onChange(wp.id, axis, Number(e.target.value))} style={{ width: '100%' }} />
+          <span style={{ fonateCe: 9, color: 'var(--text-3)', letterSpacing: '0.12em', textTransform: 'uppercase' }}>{axis}</span>
+          <input
+            type="number"
+            value={wp[axis]}
+            onChange={e => onChange(wp.id, axis, Number(e.target.value))}
+            style={{ width: '100%' }}
+          />
         </div>
       ))}
     </div>
@@ -71,10 +79,10 @@ const WaypointCard = ({ wp, index, onChange, onRemove }) => (
 
 export function MissionSidebar({ mlpEnabled, onMlpChange, speedLimit, onSpeedChange, altCeiling, onAltChange }) {
   const [waypoints, setWaypoints] = useState([
-    { id: 1, x: 0,  y: 0,  z: 0  },
-    { id: 2, x: 20, y: 10, z: 15 },
-    { id: 3, x: 45, y: -5, z: 20 },
-    { id: 4, x: 70, y: 15, z: 12 },
+    { id: 1, x: 0,  y: 0,   z: 0  },
+    { id: 2, x: 20, y: 10,  z: 15 },
+    { id: 3, x: 45, y: -5,  z: 20 },
+    { id: 4, x: 70, y: 15,  z: 12 },
   ])
 
   const addWaypoint = () => {
@@ -109,7 +117,7 @@ export function MissionSidebar({ mlpEnabled, onMlpChange, speedLimit, onSpeedCha
         <p className="section-label">Flight Controls</p>
         <Toggle label="MLP Correction" enabled={mlpEnabled} onChange={onMlpChange} />
         <Slider label="SPEED LIMIT" value={speedLimit} min={1} max={20} step={0.5} onChange={onSpeedChange} unit=" m/s" />
-        <Slider label="ALT CEILING"  value={altCeiling} min={5} max={100} step={1}  onChange={onAltChange}  unit=" m" />
+        <Slider label="ALT CEILING"  value={altCeiling} min={5} max={100} step={1}  onChange={onAltChange}   unit=" m"   />
       </div>
 
       <div className="divider" />
@@ -132,13 +140,14 @@ export function MissionSidebar({ mlpEnabled, onMlpChange, speedLimit, onSpeedCha
           onClick={addWaypoint}
           style={{
             width: '100%', padding: '8px 0', borderRadius: 8,
-            background: 'rgba(249,115,22,0.08)',
-            border: '1px solid rgba(249,115,22,0.2)',
-            color: 'var(--orange)', fontSize: 12, fontWeight: 600,
-            letterSpacing: '0.06em', cursor: 'pointer', transition: 'background 0.15s',
+            background: 'rgba(139,92,246,0.10)',
+            border: '1px solid rgba(139,92,246,0.30)',
+            color: 'var(--violet)',
+            fontSize: 12, fontWeight: 600, letterSpacing: '0.06em',
+            cursor: 'pointer', transition: 'background 0.15s',
           }}
-          onMouseEnter={e => e.currentTarget.style.background = 'rgba(249,115,22,0.14)'}
-          onMouseLeave={e => e.currentTarget.style.background = 'rgba(249,115,22,0.08)'}
+          onMouseEnter={e => e.currentTarget.style.background = 'rgba(139,92,246,0.18)'}
+          onMouseLeave={e => e.currentTarget.style.background = 'rgba(139,92,246,0.10)'}
         >
           + ADD WAYPOINT
         </button>

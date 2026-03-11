@@ -6,33 +6,41 @@ const StatusBadge = ({ label, dot, dotColor, dimmed }) => (
     style={{
       display: "flex",
       alignItems: "center",
-      gap: 7,
-      padding: "5px 12px",
+      gap: 6,
+      padding: "4px 10px",
       borderRadius: 99,
       background: "rgba(255,255,255,0.04)",
-      border: `1px solid ${dimmed ? "rgba(255,255,255,0.07)" : dotColor + "33"}`,
+      border: "1px solid rgba(255,255,255,0.07)",
     }}
   >
     {dot && (
       <span
-        style={{ position: "relative", display: "flex", width: 7, height: 7 }}
+        style={{
+          position: "relative",
+          display: "flex",
+          width: 6,
+          height: 6,
+          flexShrink: 0,
+        }}
       >
         <span
           style={{
             position: "absolute",
             inset: 0,
             borderRadius: "50%",
-            background: dotColor,
-            animation: "ping 1.5s cubic-bezier(0,0,0.2,1) infinite",
-            opacity: 0.6,
+            background: dimmed ? "rgba(255,255,255,0.25)" : dotColor,
+            animation: dimmed
+              ? "none"
+              : "ping 1.5s cubic-bezier(0,0,0.2,1) infinite",
+            opacity: 0.5,
           }}
         />
         <span
           style={{
-            width: 7,
-            height: 7,
+            width: 6,
+            height: 6,
             borderRadius: "50%",
-            background: dotColor,
+            background: dimmed ? "rgba(255,255,255,0.25)" : dotColor,
             position: "relative",
           }}
         />
@@ -42,8 +50,8 @@ const StatusBadge = ({ label, dot, dotColor, dimmed }) => (
       style={{
         fontSize: 11,
         fontWeight: 600,
-        color: dimmed ? "var(--text-3)" : dotColor,
         letterSpacing: "0.08em",
+        color: dimmed ? "var(--text-3)" : "var(--text-2)",
       }}
     >
       {label}
@@ -51,7 +59,7 @@ const StatusBadge = ({ label, dot, dotColor, dimmed }) => (
   </div>
 );
 
-export function Header({ battery, gpsSats }) {
+export function Header() {
   const [time, setTime] = useState("");
 
   useEffect(() => {
@@ -61,10 +69,6 @@ export function Header({ battery, gpsSats }) {
     const id = setInterval(tick, 1000);
     return () => clearInterval(id);
   }, []);
-
-  const batNum = Number(battery);
-  const batColor =
-    batNum > 50 ? "#4ade80" : batNum > 20 ? "var(--yellow)" : "var(--orange)";
 
   return (
     <motion.header
@@ -77,20 +81,19 @@ export function Header({ battery, gpsSats }) {
         justifyContent: "space-between",
         padding: "0 20px",
         height: "52px",
-        background: "rgba(8,8,16,0.75)",
-        backdropFilter: "blur(20px)",
+        background: "rgba(7,5,26,0.82)",
+        backdropFilter: "blur(24px) saturate(180%)",
         borderBottom: "1px solid var(--border)",
         flexShrink: 0,
         zIndex: 20,
       }}
     >
-      {/* Brand */}
       <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
         <span
           style={{
-            fontSize: 20,
+            fontSize: 18,
             fontWeight: 700,
-            letterSpacing: "0.05em",
+            letterSpacing: "0.06em",
             background: "var(--plasma-h)",
             WebkitBackgroundClip: "text",
             WebkitTextFillColor: "transparent",
@@ -98,40 +101,28 @@ export function Header({ battery, gpsSats }) {
         >
           CINE
         </span>
-        <span style={{ color: "var(--border)", fontSize: 16 }}>·</span>
+        <span style={{ color: "var(--border)", fontSize: 14 }}>·</span>
         <span
           style={{
-            fontSize: 12,
-            color: "var(--text-2)",
-            letterSpacing: "0.1em",
+            fontSize: 11,
+            color: "var(--text-3)",
+            letterSpacing: "0.12em",
           }}
         >
           MISSION CONTROL
         </span>
       </div>
 
-      {/* Status row */}
-      <div style={{ display: "flex", gap: 6 }}>
-        <StatusBadge label="ARMED" dot dotColor="#4ade80" />
-        <StatusBadge
-          label={`GPS  ${gpsSats} SAT`}
-          dot
-          dotColor="var(--purple)"
-        />
-        <StatusBadge label="LIVE" dot dotColor="var(--orange)" />
-        <StatusBadge
-          label={`BAT  ${battery}%`}
-          dot
-          dotColor={batColor}
-          dimmed={batNum > 50}
-        />
+      <div style={{ display: "flex", gap: 5 }}>
+        <StatusBadge label="ARMED" dot dotColor="var(--white)" />
+        <StatusBadge label="LIVE" dot dotColor="var(--violet)" />
       </div>
 
       {/* Clock */}
       <span
         style={{
-          fontSize: 13,
-          color: "var(--text-2)",
+          fontSize: 12,
+          color: "var(--text-3)",
           letterSpacing: "0.15em",
         }}
       >

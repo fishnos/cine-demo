@@ -1,105 +1,166 @@
-import { motion } from 'framer-motion'
+import { motion } from "framer-motion";
+import { FiPause, FiPlay } from "react-icons/fi";
 
-export function MissionFooter({ waypoints, currentWaypointIdx, missionProgress }) {
+export function MissionFooter({
+  waypoints,
+  currentWaypointIdx,
+  missionProgress,
+  paused,
+  togglePause,
+}) {
+  const currentLabel = waypoints[currentWaypointIdx]?.label ?? "";
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.25, duration: 0.35 }}
       style={{
-        background: 'rgba(8,8,16,0.8)',
-        backdropFilter: 'blur(20px)',
-        borderTop: '1px solid var(--border)',
-        padding: '0 28px',
-        height: '60px',
-        display: 'flex',
-        alignItems: 'center',
-        gap: 20,
+        background: "rgba(7,5,26,0.82)",
+        backdropFilter: "blur(24px) saturate(180%)",
+        borderTop: "1px solid var(--border)",
+        padding: "0 20px",
+        height: "52px",
+        display: "flex",
+        alignItems: "center",
+        gap: 14,
         flexShrink: 0,
       }}
     >
-      <span style={{ fontSize: 9, color: 'var(--text-3)', letterSpacing: '0.18em', textTransform: 'uppercase', whiteSpace: 'nowrap' }}>
-        Mission
-      </span>
+      {/* Pause / Play */}
+      <button
+        onClick={togglePause}
+        style={{
+          width: 26,
+          height: 26,
+          borderRadius: "50%",
+          flexShrink: 0,
+          background: "rgba(255,255,255,0.05)",
+          border: "1px solid var(--border)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          color: "var(--text-3)",
+          transition: "border-color 0.15s, color 0.15s",
+          cursor: "pointer",
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.borderColor = "var(--violet)";
+          e.currentTarget.style.color = "var(--violet)";
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.borderColor = "var(--border)";
+          e.currentTarget.style.color = "var(--text-3)";
+        }}
+      >
+        {paused ? <FiPlay size={10} /> : <FiPause size={10} />}
+      </button>
 
-      {/* Timeline */}
-      <div style={{ flex: 1, position: 'relative', display: 'flex', alignItems: 'center' }}>
+      {/* Track */}
+      <div style={{ flex: 1, position: "relative", height: 16, flexShrink: 0 }}>
         {/* Background track */}
-        <div style={{
-          position: 'absolute', left: 0, right: 0, height: 2,
-          background: 'rgba(255,255,255,0.06)', borderRadius: 1,
-        }} />
+        <div
+          style={{
+            position: "absolute",
+            left: 0,
+            right: 0,
+            top: "50%",
+            transform: "translateY(-50%)",
+            height: 1,
+            background: "rgba(255,255,255,0.08)",
+          }}
+        />
 
         {/* Filled track */}
         <motion.div
           animate={{ width: `${missionProgress * 100}%` }}
-          transition={{ duration: 0.3, ease: 'easeOut' }}
+          transition={{ duration: 0.25, ease: "linear" }}
           style={{
-            position: 'absolute', left: 0, height: 2,
-            background: 'var(--plasma-h)', borderRadius: 1,
-            boxShadow: '0 0 8px rgba(249,115,22,0.5)',
+            position: "absolute",
+            left: 0,
+            top: "50%",
+            transform: "translateY(-50%)",
+            height: 1,
+            background: "var(--violet)",
+            boxShadow: "0 0 6px rgba(139,92,246,0.55)",
           }}
         />
 
-        {/* Waypoint nodes */}
+        {/* Dots — 14x14 fixed wrapper prevents any jitter when dot size changes */}
         {waypoints.map((wp, i) => {
-          const pct = i / (waypoints.length - 1)
-          const done = i < currentWaypointIdx
-          const active = i === currentWaypointIdx
+          const pct = (i / (waypoints.length - 1)) * 100;
+          const passed = i < currentWaypointIdx;
+          const active = i === currentWaypointIdx;
 
           return (
             <div
               key={wp.id}
               style={{
-                position: 'absolute',
-                left: `${pct * 100}%`,
-                transform: 'translateX(-50%)',
-                display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 5,
+                position: "absolute",
+                left: `${pct}%`,
+                top: "50%",
+                /* translate is always exactly -7px since wrapper is fixed 14x14 */
+                transform: "translate(-50%, -50%)",
+                width: 14,
+                height: 14,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
               }}
             >
-              {/* Label above */}
-              <span style={{
-                fontSize: 9, whiteSpace: 'nowrap', marginBottom: 2,
-                color: done ? 'var(--orange)' : active ? 'var(--white)' : 'var(--text-3)',
-                letterSpacing: '0.06em',
-                transition: 'color 0.3s',
-              }}>
-                {wp.label}
-              </span>
-
-              {/* Node dot */}
-              <motion.div
-                animate={{
-                  scale: active ? 1.3 : 1,
-                  boxShadow: active
-                    ? '0 0 0 3px rgba(249,115,22,0.25), 0 0 12px rgba(249,115,22,0.4)'
-                    : done
-                    ? '0 0 0 2px rgba(249,115,22,0.3)'
-                    : 'none',
-                }}
-                transition={{ duration: 0.25 }}
+              <div
                 style={{
-                  width: active ? 10 : 8,
-                  height: active ? 10 : 8,
-                  borderRadius: '50%',
-                  background: done || active ? 'var(--orange)' : 'rgba(255,255,255,0.15)',
-                  border: done || active ? 'none' : '1px solid rgba(255,255,255,0.15)',
-                  transition: 'background 0.3s, width 0.2s, height 0.2s',
-                  position: 'relative', zIndex: 1,
+                  width: active ? 8 : passed ? 6 : 5,
+                  height: active ? 8 : passed ? 6 : 5,
+                  borderRadius: "50%",
+                  flexShrink: 0,
+                  background: active
+                    ? "var(--white)"
+                    : passed
+                      ? "var(--violet)"
+                      : "rgba(255,255,255,0.20)",
+                  boxShadow: active
+                    ? "0 0 0 2px rgba(139,92,246,0.25), 0 0 10px rgba(139,92,246,0.55)"
+                    : "none",
+                  transition:
+                    "width 0.3s ease, height 0.3s ease, background 0.3s ease, box-shadow 0.3s ease",
                 }}
               />
             </div>
-          )
+          );
         })}
       </div>
 
+      {/* Current waypoint label */}
+      <span
+        style={{
+          fontSize: 10,
+          fontWeight: 600,
+          whiteSpace: "nowrap",
+          flexShrink: 0,
+          color: "var(--text-3)",
+          letterSpacing: "0.08em",
+          minWidth: 48,
+          textAlign: "right",
+        }}
+      >
+        {currentLabel}
+      </span>
+
       {/* Progress % */}
-      <span style={{
-        fontSize: 13, fontWeight: 700, whiteSpace: 'nowrap',
-        background: 'var(--plasma-h)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
-      }}>
+      <span
+        style={{
+          fontSize: 12,
+          fontWeight: 700,
+          whiteSpace: "nowrap",
+          flexShrink: 0,
+          color: "var(--violet)",
+          minWidth: 36,
+          textAlign: "right",
+        }}
+      >
         {Math.round(missionProgress * 100)}%
       </span>
     </motion.div>
-  )
+  );
 }

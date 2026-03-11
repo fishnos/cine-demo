@@ -54,16 +54,14 @@ export function MapView({
         y1={PADDING}
         x2={x}
         y2={MAP_H - PADDING}
-        stroke="rgba(255,255,255,0.05)"
+        stroke="rgba(139,92,246,0.12)"
         strokeWidth="1"
       />,
-    );
-    gridLines.push(
       <text
         key={`gxt${gx}`}
         x={x}
         y={MAP_H - 8}
-        fill="rgba(255,255,255,0.2)"
+        fill="rgba(170,150,255,0.35)"
         fontSize="9"
         textAnchor="middle"
       >
@@ -80,16 +78,14 @@ export function MapView({
         y1={y}
         x2={MAP_W - PADDING}
         y2={y}
-        stroke="rgba(255,255,255,0.05)"
+        stroke="rgba(139,92,246,0.12)"
         strokeWidth="1"
       />,
-    );
-    gridLines.push(
       <text
         key={`gyt${gy}`}
         x={8}
         y={y + 3}
-        fill="rgba(255,255,255,0.2)"
+        fill="rgba(170,150,255,0.35)"
         fontSize="9"
         textAnchor="middle"
       >
@@ -119,32 +115,41 @@ export function MapView({
         }}
       >
         <span
-          className="font-pixel text-xs px-2 py-1 rounded"
           style={{
-            background: "rgba(10,10,15,0.8)",
-            border: "1px solid rgba(138,43,226,0.3)",
-            color: "#8a2be2",
+            fontFamily: "var(--font)",
+            fontSize: 11,
+            padding: "4px 10px",
+            borderRadius: 6,
+            background: "rgba(7,5,26,0.80)",
+            border: "1px solid rgba(139,92,246,0.35)",
+            color: "#8b5cf6",
           }}
         >
           TOP-DOWN VIEW
         </span>
         <span
-          className="font-pixel text-xs px-2 py-1 rounded"
           style={{
-            background: "rgba(10,10,15,0.8)",
-            border: "1px solid rgba(255,255,255,0.1)",
-            color: "rgba(255,255,255,0.4)",
+            fontFamily: "var(--font)",
+            fontSize: 11,
+            padding: "4px 10px",
+            borderRadius: 6,
+            background: "rgba(7,5,26,0.80)",
+            border: "1px solid rgba(139,92,246,0.18)",
+            color: "rgba(170,150,255,0.55)",
           }}
         >
           XY PLANE
         </span>
         {mlpEnabled && (
           <span
-            className="font-pixel text-xs px-2 py-1 rounded"
             style={{
-              background: "rgba(138,43,226,0.15)",
-              border: "1px solid rgba(138,43,226,0.4)",
-              color: "#8a2be2",
+              fontFamily: "var(--font)",
+              fontSize: 11,
+              padding: "4px 10px",
+              borderRadius: 6,
+              background: "rgba(59,130,246,0.12)",
+              border: "1px solid rgba(59,130,246,0.40)",
+              color: "#3b82f6",
             }}
           >
             MLP ON
@@ -158,14 +163,14 @@ export function MapView({
         style={{ width: "100%", height: "100%" }}
       >
         <defs>
-          <filter id="glow-purple">
+          <filter id="glow-violet">
             <feGaussianBlur stdDeviation="3" result="blur" />
             <feMerge>
               <feMergeNode in="blur" />
               <feMergeNode in="SourceGraphic" />
             </feMerge>
           </filter>
-          <filter id="glow-gold">
+          <filter id="glow-cyan">
             <feGaussianBlur stdDeviation="4" result="blur" />
             <feMerge>
               <feMergeNode in="blur" />
@@ -179,18 +184,18 @@ export function MapView({
         <path
           d={pathD(RAW_PATH, bounds)}
           fill="none"
-          stroke="rgba(255,140,0,0.35)"
-          strokeWidth="2"
-          strokeDasharray="6 4"
+          stroke="rgba(255,255,255,0.12)"
+          strokeWidth="1.5"
+          strokeDasharray="5 4"
         />
 
         {mlpEnabled && (
           <path
             d={pathD(CORRECTED_PATH, bounds)}
             fill="none"
-            stroke="#8a2be2"
-            strokeWidth="2.5"
-            filter="url(#glow-purple)"
+            stroke="#8b5cf6"
+            strokeWidth="2"
+            filter="url(#glow-violet)"
           />
         )}
 
@@ -202,9 +207,11 @@ export function MapView({
               <circle
                 cx={pt.x}
                 cy={pt.y}
-                r="8"
-                fill={done ? "#22c55e22" : "rgba(138,43,226,0.15)"}
-                stroke={done ? "#22c55e" : "rgba(138,43,226,0.6)"}
+                r="7"
+                fill={done ? "rgba(139,92,246,0.18)" : "rgba(255,255,255,0.04)"}
+                stroke={
+                  done ? "rgba(139,92,246,0.80)" : "rgba(255,255,255,0.18)"
+                }
                 strokeWidth="1.5"
               />
               <text
@@ -213,16 +220,16 @@ export function MapView({
                 textAnchor="middle"
                 fontSize="8"
                 fontWeight="700"
-                fill={done ? "#22c55e" : "#8a2be2"}
+                fill={done ? "#8b5cf6" : "rgba(255,255,255,0.35)"}
               >
                 {i}
               </text>
               <text
                 x={pt.x}
-                y={pt.y - 13}
+                y={pt.y - 12}
                 textAnchor="middle"
-                fontSize="8"
-                fill="rgba(255,255,255,0.4)"
+                fontSize="7.5"
+                fill="rgba(170,150,255,0.45)"
               >
                 {wp.label}
               </text>
@@ -233,19 +240,20 @@ export function MapView({
         <circle
           cx={dronePos.x}
           cy={dronePos.y}
-          r="10"
-          fill="rgba(255,215,0,0.15)"
-          stroke="#ffd700"
-          strokeWidth="2"
-          filter="url(#glow-gold)"
+          r="9"
+          fill="rgba(139,92,246,0.10)"
+          stroke="rgba(139,92,246,0.70)"
+          strokeWidth="1.5"
+          filter="url(#glow-violet)"
         />
-        <circle cx={dronePos.x} cy={dronePos.y} r="4" fill="#ffd700" />
+        <circle cx={dronePos.x} cy={dronePos.y} r="3.5" fill="white" />
 
+        {/* Compass */}
         <g transform={`translate(${MAP_W - 36}, 36)`}>
           <circle
             r="18"
-            fill="rgba(10,10,15,0.7)"
-            stroke="rgba(255,255,255,0.1)"
+            fill="rgba(7,5,26,0.80)"
+            stroke="rgba(139,92,246,0.25)"
             strokeWidth="1"
           />
           {[
@@ -263,7 +271,7 @@ export function MapView({
                 textAnchor="middle"
                 fontSize="8"
                 fontWeight="700"
-                fill={d === "N" ? "#ff3333" : "rgba(255,255,255,0.5)"}
+                fill={d === "N" ? "#8b5cf6" : "rgba(200,190,255,0.55)"}
               >
                 {d}
               </text>
