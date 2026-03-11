@@ -3,15 +3,13 @@
 :root {
   --font-family: 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;
 
-  /* Plasma Theme Variables */
   --bg-color: #ffffff;
   --text-main: #1a1a1a;
   --text-muted: #666666;
 
-  /* Plasma Gradients */
-  --plasma-gradient-1: #8a2be2; /* Purple */
-  --plasma-gradient-2: #ff8c00; /* Orange */
-  --plasma-gradient-3: #ffd700; /* Yellow */
+  --plasma-gradient-1: #8a2be2;
+  --plasma-gradient-2: #ff8c00;
+  --plasma-gradient-3: #ffd700;
 
   --panel-bg: rgba(255, 255, 255, 0.4);
   --panel-border: rgba(255, 255, 255, 0.6);
@@ -35,7 +33,6 @@ body {
   min-height: 100vh;
   min-width: 100vw;
   overflow: hidden;
-  /* Complex animated gradient background */
   background:
     radial-gradient(circle at 15% 50%, rgba(138, 43, 226, 0.15), transparent 40%),
     radial-gradient(circle at 85% 30%, rgba(255, 140, 0, 0.15), transparent 40%),
@@ -50,7 +47,6 @@ body {
   100% { background-position: 0% 50%; }
 }
 
-/* Glassmorphism Utilities */
 .glass-panel {
   background: var(--panel-bg);
   backdrop-filter: var(--glass-blur);
@@ -65,7 +61,6 @@ body {
   box-shadow: var(--panel-shadow-hover);
 }
 
-/* Base button */
 button {
   background: rgba(255, 255, 255, 0.5);
   backdrop-filter: blur(10px);

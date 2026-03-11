@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 
 const Sidebar = () => {
   const [mlpEnabled, setMlpEnabled] = useState(true);
-  const [controlMode, setControlMode] = useState('minvo'); // 'minvo' or 'bspline'
+  const [controlMode, setControlMode] = useState('minvo');
 
   return (
     <motion.div
