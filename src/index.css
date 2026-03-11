@@ -1,0 +1,90 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --font-family: 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;
+
+  /* Plasma Theme Variables */
+  --bg-color: #ffffff;
+  --text-main: #1a1a1a;
+  --text-muted: #666666;
+
+  /* Plasma Gradients */
+  --plasma-gradient-1: #8a2be2; /* Purple */
+  --plasma-gradient-2: #ff8c00; /* Orange */
+  --plasma-gradient-3: #ffd700; /* Yellow */
+
+  --panel-bg: rgba(255, 255, 255, 0.4);
+  --panel-border: rgba(255, 255, 255, 0.6);
+  --panel-shadow: 0 8px 32px 0 rgba(138, 43, 226, 0.15);
+  --panel-shadow-hover: 0 12px 48px 0 rgba(138, 43, 226, 0.25);
+
+  --glass-blur: blur(30px);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-family);
+  background-color: var(--bg-color);
+  color: var(--text-main);
+  min-height: 100vh;
+  min-width: 100vw;
+  overflow: hidden;
+  /* Complex animated gradient background */
+  background:
+    radial-gradient(circle at 15% 50%, rgba(138, 43, 226, 0.15), transparent 40%),
+    radial-gradient(circle at 85% 30%, rgba(255, 140, 0, 0.15), transparent 40%),
+    radial-gradient(circle at 50% 80%, rgba(255, 215, 0, 0.15), transparent 40%);
+  background-size: 200% 200%;
+  animation: gradientShift 20s ease infinite;
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Glassmorphism Utilities */
+.glass-panel {
+  background: var(--panel-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--panel-border);
+  box-shadow: var(--panel-shadow);
+  border-radius: 24px;
+  transition: box-shadow 0.3s ease;
+}
+
+.glass-panel:hover {
+  box-shadow: var(--panel-shadow-hover);
+}
+
+/* Base button */
+button {
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 12px;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-main);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+button:hover {
+  background: rgba(255, 255, 255, 0.8);
+  transform: translateY(-1px);
+}
+
+button:active {
+  transform: translateY(1px);
+}
