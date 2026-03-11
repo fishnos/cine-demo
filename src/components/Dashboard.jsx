@@ -1,42 +1,69 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import Sidebar from './Sidebar';
-import VideoFeedPlaceholder from './VideoFeedPlaceholder';
-import ThreeJSPlaceholder from './ThreeJSPlaceholder';
+import { useState } from 'react'
+import { motion } from 'framer-motion'
+import { useTelemetry } from '@/hooks/useTelemetry'
+import { Header } from '@/components/layout/Header'
+import { MissionSidebar } from '@/components/layout/MissionSidebar'
+import { TelemetryPanel } from '@/components/layout/TelemetryPanel'
+import { MissionFooter } from '@/components/layout/MissionFooter'
+import { ViewportTabs } from '@/components/viewport/ViewportTabs'
 
 const Dashboard = () => {
+  const [activeTab, setActiveTab] = useState('LIVE')
+  const [mlpEnabled, setMlpEnabled] = useState(true)
+  const [speedLimit, setSpeedLimit] = useState(10)
+  const [altCeiling, setAltCeiling] = useState(50)
+
+  const telemetry = useTelemetry()
+
   return (
     <motion.div
-      className="dashboard-container"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.5 }}
+      transition={{ duration: 0.4 }}
       style={{
         display: 'grid',
-        gridTemplateColumns: 'minmax(300px, 350px) 1fr',
-        gridTemplateRows: '1fr',
+        gridTemplateRows: '52px 1fr 60px',
         height: '100vh',
         width: '100vw',
-        padding: '24px',
-        gap: '24px'
+        overflow: 'hidden',
       }}
     >
-      <Sidebar />
-      <div
-        className="main-content"
-        style={{
-          display: 'grid',
-          gridTemplateRows: '1fr 1fr',
-          gap: '24px',
-          height: '100%'
-        }}
-      >
-        <VideoFeedPlaceholder />
-        <ThreeJSPlaceholder />
-      </div>
-    </motion.div>
-  );
-};
+      <Header battery={telemetry.battery} gpsSats={telemetry.gpsSats} />
 
-export default Dashboard;
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: '260px 1fr 220px',
+        gap: 14,
+        padding: 14,
+        overflow: 'hidden',
+        minHeight: 0,
+      }}>
+        <MissionSidebar
+          mlpEnabled={mlpEnabled}
+          onMlpChange={setMlpEnabled}
+          speedLimit={speedLimit}
+          onSpeedChange={setSpeedLimit}
+          altCeiling={altCeiling}
+          onAltChange={setAltCeiling}
+        />
+
+        <ViewportTabs
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          telemetry={telemetry}
+          mlpEnabled={mlpEnabled}
+        />
+
+        <TelemetryPanel telemetry={telemetry} />
+      </div>
+
+      <MissionFooter
+        waypoints={telemetry.waypoints}
+        currentWaypointIdx={telemetry.currentWaypointIdx}
+        missionProgress={telemetry.missionProgress}
+      />
+    </motion.div>
+  )
+}
+
+export default Dashboard

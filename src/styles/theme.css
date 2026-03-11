@@ -1,0 +1,37 @@
+@import url("https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;500;600;700&display=swap");
+
+:root {
+  /* ── Signature palette ── */
+  --orange: #f97316;
+  --purple: #a855f7;
+  --yellow: #fbbf24;
+  --white: #ffffff;
+
+  /* Plasma gradient – purple → orange */
+  --plasma: linear-gradient(135deg, var(--purple) 0%, var(--orange) 100%);
+  --plasma-h: linear-gradient(90deg, var(--purple) 0%, var(--orange) 100%);
+
+  /* ── Backgrounds ── */
+  --bg: #080810;
+  --panel: rgba(255, 255, 255, 0.035);
+  --panel-hover: rgba(255, 255, 255, 0.06);
+
+  /* ── Borders ── */
+  --border: rgba(255, 255, 255, 0.07);
+  --border-accent: rgba(249, 115, 22, 0.22); /* orange tint */
+  --border-purple: rgba(168, 85, 247, 0.22);
+
+  /* ── Text ── */
+  --text: rgba(255, 255, 255, 0.92);
+  --text-2: rgba(255, 255, 255, 0.45);
+  --text-3: rgba(255, 255, 255, 0.2);
+
+  /* ── Glass ── */
+  --blur: blur(20px);
+  --shadow: 0 0 0 1px var(--border), 0 8px 32px rgba(0, 0, 0, 0.5);
+  --shadow-hover:
+    0 0 0 1px var(--border-accent), 0 8px 40px rgba(249, 115, 22, 0.08);
+
+  /* ── Font ── */
+  --font: "Pixelify Sans", monospace;
+}

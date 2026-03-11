@@ -1,0 +1,169 @@
+@import "./theme.css";
+@import "tailwindcss";
+
+@plugin "tailwindcss-animate";
+@plugin "tailwindcss-react-aria-components";
+
+/* ── Reset ── */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+html,
+body {
+  height: 100%;
+  overflow: hidden;
+}
+
+/* ── Base ── */
+body {
+  font-family: var(--font);
+  background-color: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  position: relative;
+  -webkit-font-smoothing: antialiased;
+  letter-spacing: 0.01em;
+}
+
+/* ── Plasma background ── */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(
+      ellipse 55% 45% at 10% 50%,
+      rgba(168, 85, 247, 0.1),
+      transparent
+    ),
+    radial-gradient(
+      ellipse 45% 35% at 88% 25%,
+      rgba(249, 115, 22, 0.09),
+      transparent
+    ),
+    radial-gradient(
+      ellipse 35% 45% at 55% 90%,
+      rgba(251, 191, 36, 0.06),
+      transparent
+    );
+  animation: plasmaShift 25s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+
+@keyframes plasmaShift {
+  0%,
+  100% {
+    filter: hue-rotate(0deg) brightness(1);
+  }
+  40% {
+    filter: hue-rotate(12deg) brightness(0.95);
+  }
+  70% {
+    filter: hue-rotate(-8deg) brightness(1.02);
+  }
+}
+
+/* ── Glass panel ── */
+.glass-panel {
+  background: var(--panel);
+  backdrop-filter: var(--blur);
+  -webkit-backdrop-filter: var(--blur);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  border-radius: 14px;
+  transition:
+    box-shadow 0.25s ease,
+    border-color 0.25s ease;
+}
+.glass-panel:hover {
+  box-shadow: var(--shadow-hover);
+  border-color: var(--border-accent);
+}
+
+/* ── Section label ── */
+.section-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+/* ── Divider ── */
+.divider {
+  height: 1px;
+  background: var(--border);
+}
+
+/* ── Root ── */
+#root {
+  position: relative;
+  z-index: 1;
+  height: 100%;
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar {
+  width: 3px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(249, 115, 22, 0.3);
+  border-radius: 2px;
+}
+
+/* ── Range input ── */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  background: rgba(255, 255, 255, 0.06);
+  height: 3px;
+  border-radius: 2px;
+  outline: none;
+  width: 100%;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 12px;
+  height: 12px;
+  background: var(--orange);
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 0 6px rgba(249, 115, 22, 0.7);
+}
+
+/* ── Number input ── */
+input[type="number"] {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 12px;
+  padding: 4px 6px;
+  width: 60px;
+  outline: none;
+  transition: border-color 0.15s;
+  -moz-appearance: textfield;
+}
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+}
+input[type="number"]:focus {
+  border-color: var(--orange);
+}
+
+/* ── Button ── */
+button {
+  font-family: var(--font);
+  cursor: pointer;
+  background: none;
+  border: none;
+  color: inherit;
+}

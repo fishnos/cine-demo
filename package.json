@@ -12,9 +12,16 @@
   "dependencies": {
     "@react-three/drei": "^10.7.7",
     "@react-three/fiber": "^9.5.0",
+    "@tailwindcss/vite": "^4.2.1",
+    "@untitledui/icons": "^0.0.21",
     "framer-motion": "^12.35.2",
     "react": "^19.2.0",
+    "react-aria-components": "^1.16.0",
     "react-dom": "^19.2.0",
+    "tailwind-merge": "^3.5.0",
+    "tailwindcss": "^4.2.1",
+    "tailwindcss-animate": "^1.0.7",
+    "tailwindcss-react-aria-components": "^2.0.1",
     "three": "^0.183.2"
   },
   "devDependencies": {
