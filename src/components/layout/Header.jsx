@@ -113,12 +113,11 @@ export function Header() {
         </span>
       </div>
 
-      <div style={{ display: "flex", gap: 5 }}>
+      <div style={{ display: "flex", gap: 5 }} className="absolute flex flex-row justify-center w-full">
         <StatusBadge label="ARMED" dot dotColor="var(--white)" />
         <StatusBadge label="LIVE" dot dotColor="var(--violet)" />
       </div>
 
-      {/* Clock */}
       <span
         style={{
           fontSize: 12,

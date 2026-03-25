@@ -1,7 +1,12 @@
 import Dashboard from "./components/Dashboard";
+import { WaypointProvider } from "./contexts/WaypointContext";
 
 function App() {
-  return <Dashboard />;
+  return (
+    <WaypointProvider>
+        <Dashboard />
+    </WaypointProvider>
+  )
 }
 
 export default App;

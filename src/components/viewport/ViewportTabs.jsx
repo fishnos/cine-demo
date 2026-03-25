@@ -1,5 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { VideoFeed } from "./VideoFeed";
+import { MapView } from "./MapView";
 
 const VizPlaceholder = () => (
   <div
@@ -75,7 +76,12 @@ const VizPlaceholder = () => (
 
 const TABS = ["LIVE", "SPLIT", "3D VIZ"];
 
-export function ViewportTabs({ activeTab, onTabChange }) {
+export function ViewportTabs({
+  activeTab,
+  onTabChange,
+  telemetry,
+  mlpEnabled,
+}) {
   return (
     <div
       style={{

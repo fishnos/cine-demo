@@ -1,5 +1,4 @@
 import React from "react";
-import { RAW_PATH, CORRECTED_PATH } from "@/hooks/useTelemetry";
 
 const PADDING = 40;
 const MAP_W = 600;
@@ -37,12 +36,16 @@ export function MapView({
   waypoints,
   mlpEnabled,
   currentWaypointIdx,
+  rawPath,
+  correctedPath,
 }) {
-  const bounds = getBounds([RAW_PATH, CORRECTED_PATH]);
+  if (!rawPath.length) return null;
+
+  const bounds = getBounds([rawPath, correctedPath]);
 
   const dronePos = position
     ? toSVG({ x: position.x, y: position.y }, bounds)
-    : toSVG(RAW_PATH[0], bounds);
+    : toSVG(rawPath[0], bounds);
 
   const gridLines = [];
   for (let gx = Math.ceil(bounds.minX / 10) * 10; gx <= bounds.maxX; gx += 10) {
@@ -182,7 +185,7 @@ export function MapView({
         {gridLines}
 
         <path
-          d={pathD(RAW_PATH, bounds)}
+          d={pathD(rawPath, bounds)}
           fill="none"
           stroke="rgba(255,255,255,0.12)"
           strokeWidth="1.5"
@@ -191,7 +194,7 @@ export function MapView({
 
         {mlpEnabled && (
           <path
-            d={pathD(CORRECTED_PATH, bounds)}
+            d={pathD(correctedPath, bounds)}
             fill="none"
             stroke="#8b5cf6"
             strokeWidth="2"

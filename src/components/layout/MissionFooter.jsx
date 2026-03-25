@@ -27,7 +27,6 @@ export function MissionFooter({
         flexShrink: 0,
       }}
     >
-      {/* Pause / Play */}
       <button
         onClick={togglePause}
         style={{
@@ -56,9 +55,7 @@ export function MissionFooter({
         {paused ? <FiPlay size={10} /> : <FiPause size={10} />}
       </button>
 
-      {/* Track */}
       <div style={{ flex: 1, position: "relative", height: 16, flexShrink: 0 }}>
-        {/* Background track */}
         <div
           style={{
             position: "absolute",
@@ -71,7 +68,6 @@ export function MissionFooter({
           }}
         />
 
-        {/* Filled track */}
         <motion.div
           animate={{ width: `${missionProgress * 100}%` }}
           transition={{ duration: 0.25, ease: "linear" }}
@@ -86,7 +82,6 @@ export function MissionFooter({
           }}
         />
 
-        {/* Dots — 14x14 fixed wrapper prevents any jitter when dot size changes */}
         {waypoints.map((wp, i) => {
           const pct = (i / (waypoints.length - 1)) * 100;
           const passed = i < currentWaypointIdx;
@@ -99,7 +94,6 @@ export function MissionFooter({
                 position: "absolute",
                 left: `${pct}%`,
                 top: "50%",
-                /* translate is always exactly -7px since wrapper is fixed 14x14 */
                 transform: "translate(-50%, -50%)",
                 width: 14,
                 height: 14,
@@ -131,7 +125,6 @@ export function MissionFooter({
         })}
       </div>
 
-      {/* Current waypoint label */}
       <span
         style={{
           fontSize: 10,
@@ -147,7 +140,6 @@ export function MissionFooter({
         {currentLabel}
       </span>
 
-      {/* Progress % */}
       <span
         style={{
           fontSize: 12,
