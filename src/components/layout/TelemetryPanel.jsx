@@ -1,11 +1,11 @@
 import { motion } from "framer-motion";
 
-const MetricCard = ({ label, value, unit, accent }) => (
+const MetricCard = ({ label, value, unit, primary }) => (
   <div
     style={{
       padding: "10px 12px",
       borderRadius: 10,
-      background: "rgba(255,255,255,0.04)",
+      background: "rgba(255,255,255,0.03)",
       border: "1px solid var(--border)",
       display: "flex",
       flexDirection: "column",
@@ -28,7 +28,7 @@ const MetricCard = ({ label, value, unit, accent }) => (
           fontSize: 22,
           fontWeight: 700,
           lineHeight: 1,
-          color: accent ? "var(--violet)" : "var(--text)",
+          color: primary ? "var(--text)" : "var(--text-2)",
         }}
       >
         {value}
@@ -55,14 +55,14 @@ const AttitudeBar = ({ label, value, min, max }) => {
         >
           {label}
         </span>
-        <span style={{ fontSize: 11, color: "var(--text-2)", fontWeight: 600 }}>
+        <span style={{ fontSize: 12, color: "var(--text)", fontWeight: 600 }}>
           {value}°
         </span>
       </div>
       <div
         style={{
           height: 2,
-          background: "rgba(255,255,255,0.07)",
+          background: "rgba(255,255,255,0.06)",
           borderRadius: 2,
           overflow: "hidden",
         }}
@@ -74,7 +74,6 @@ const AttitudeBar = ({ label, value, min, max }) => {
             height: "100%",
             background: "var(--violet)",
             borderRadius: 2,
-            opacity: 0.7,
           }}
         />
       </div>
@@ -83,14 +82,7 @@ const AttitudeBar = ({ label, value, min, max }) => {
 };
 
 export function TelemetryPanel({ telemetry }) {
-  const {
-    speed,
-    altitude,
-    gpsSats,
-    signalStrength,
-    attitude,
-    events,
-  } = telemetry;
+  const { speed, altitude, attitude } = telemetry;
 
   return (
     <motion.aside
@@ -110,12 +102,11 @@ export function TelemetryPanel({ telemetry }) {
       <div>
         <h2
           style={{
-            fontSize: 15,
+            fontSize: 13,
             fontWeight: 700,
-            background: "var(--plasma-h)",
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent",
+            color: "var(--text)",
             marginBottom: 2,
+            letterSpacing: "0.06em",
           }}
         >
           Telemetry
@@ -134,11 +125,9 @@ export function TelemetryPanel({ telemetry }) {
       <div className="divider" />
 
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 7 }}>
-        <MetricCard label="ALT" value={altitude} unit="m" accent />
+        <MetricCard label="ALT" value={altitude} unit="m" primary />
         <MetricCard label="SPD" value={speed} unit="m/s" />
-        <MetricCard label="GPS" value={gpsSats} unit="sat" />
       </div>
-      <MetricCard label="SIGNAL" value={signalStrength} unit="dBm" />
 
       <div className="divider" />
 
@@ -147,68 +136,6 @@ export function TelemetryPanel({ telemetry }) {
         <AttitudeBar label="ROLL" value={attitude.roll} min={-30} max={30} />
         <AttitudeBar label="PITCH" value={attitude.pitch} min={-30} max={30} />
         <AttitudeBar label="YAW" value={attitude.yaw} min={0} max={360} />
-      </div>
-
-      <div className="divider" />
-
-      <div
-        style={{
-          flex: 1,
-          display: "flex",
-          flexDirection: "column",
-          minHeight: 0,
-          gap: 8,
-        }}
-      >
-        <p className="section-label">Activity</p>
-        <div
-          style={{
-            overflowY: "auto",
-            flex: 1,
-            display: "flex",
-            flexDirection: "column",
-            gap: 1,
-          }}
-        >
-          {events.map((e) => (
-            <div
-              key={e.id}
-              style={{
-                display: "flex",
-                gap: 8,
-                padding: "5px 0",
-                borderBottom: "1px solid rgba(255,255,255,0.04)",
-              }}
-            >
-              <span
-                style={{
-                  width: 4,
-                  height: 4,
-                  borderRadius: "50%",
-                  background: "rgba(139,92,246,0.6)",
-                  flexShrink: 0,
-                  marginTop: 5,
-                }}
-              />
-              <div>
-                <p
-                  style={{
-                    fontSize: 11,
-                    color: "var(--text-2)",
-                    lineHeight: 1.3,
-                  }}
-                >
-                  {e.text}
-                </p>
-                <p
-                  style={{ fontSize: 9, color: "var(--text-3)", marginTop: 1 }}
-                >
-                  {e.time}
-                </p>
-              </div>
-            </div>
-          ))}
-        </div>
       </div>
     </motion.aside>
   );

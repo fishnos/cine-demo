@@ -4,7 +4,6 @@
 @plugin "tailwindcss-animate";
 @plugin "tailwindcss-react-aria-components";
 
-/* ── Reset ── */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -26,6 +25,7 @@ body {
   letter-spacing: 0.01em;
 }
 
+/* Subtle static vignette — no animation, no hue shift */
 body::before {
   content: "";
   position: fixed;
@@ -33,40 +33,21 @@ body::before {
   background:
     radial-gradient(
       ellipse 70% 55% at 10% 60%,
-      rgba(124, 58, 237, 0.28),
+      rgba(100, 60, 200, 0.09),
       transparent
     ),
     radial-gradient(
       ellipse 55% 45% at 88% 18%,
-      rgba(59, 130, 246, 0.22),
+      rgba(59, 130, 246, 0.07),
       transparent
     ),
     radial-gradient(
       ellipse 45% 50% at 55% 95%,
-      rgba(139, 92, 246, 0.18),
-      transparent
-    ),
-    radial-gradient(
-      ellipse 30% 30% at 68% 42%,
-      rgba(34, 211, 238, 0.06),
+      rgba(124, 106, 240, 0.06),
       transparent
     );
-  animation: plasmaShift 28s ease-in-out infinite;
   pointer-events: none;
   z-index: 0;
-}
-
-@keyframes plasmaShift {
-  0%,
-  100% {
-    filter: hue-rotate(0deg) brightness(1);
-  }
-  40% {
-    filter: hue-rotate(18deg) brightness(0.92);
-  }
-  70% {
-    filter: hue-rotate(-12deg) brightness(1.05);
-  }
 }
 
 .glass-panel {
@@ -112,14 +93,14 @@ body::before {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(139, 92, 246, 0.4);
+  background: rgba(124, 106, 240, 0.3);
   border-radius: 2px;
 }
 
 input[type="range"] {
   -webkit-appearance: none;
   appearance: none;
-  background: rgba(139, 92, 246, 0.18);
+  background: rgba(124, 106, 240, 0.15);
   height: 3px;
   border-radius: 2px;
   outline: none;
@@ -127,16 +108,16 @@ input[type="range"] {
 }
 input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
+  appearance: none;
   width: 12px;
   height: 12px;
   background: var(--violet);
   border-radius: 50%;
   cursor: pointer;
-  box-shadow: 0 0 8px rgba(139, 92, 246, 0.75);
 }
 
 input[type="number"] {
-  background: rgba(139, 92, 246, 0.08);
+  background: rgba(124, 106, 240, 0.06);
   border: 1px solid var(--border);
   border-radius: 6px;
   color: var(--text);

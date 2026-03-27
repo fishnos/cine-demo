@@ -1,12 +1,15 @@
 import Dashboard from "./components/Dashboard";
 import { WaypointProvider } from "./contexts/WaypointContext";
+import { ROSProvider } from "./contexts/ROSContext";
 
 function App() {
   return (
-    <WaypointProvider>
+    <ROSProvider>
+      <WaypointProvider>
         <Dashboard />
-    </WaypointProvider>
-  )
+      </WaypointProvider>
+    </ROSProvider>
+  );
 }
 
 export default App;

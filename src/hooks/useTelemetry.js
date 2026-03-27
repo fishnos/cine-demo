@@ -1,15 +1,25 @@
-import {
-  useState,
-  useEffect,
-  useRef,
-  useCallback,
-  useContext,
-  useMemo,
-} from "react";
+import { useState, useEffect, useCallback, useContext, useMemo } from "react";
 import { WaypointContext } from "../contexts/WaypointContext";
+import { ROSContext } from "../contexts/ROSContext";
 
 function lerp(a, b, t) {
   return a + (b - a) * t;
+}
+
+function quatToEuler(q) {
+  const { x, y, z, w } = q;
+  const sinr = 2 * (w * x + y * z);
+  const cosr = 1 - 2 * (x * x + y * y);
+  const roll = Math.atan2(sinr, cosr) * (180 / Math.PI);
+  const sinp = 2 * (w * y - z * x);
+  const pitch =
+    Math.abs(sinp) >= 1
+      ? Math.sign(sinp) * 90
+      : Math.asin(sinp) * (180 / Math.PI);
+  const siny = 2 * (w * z + x * y);
+  const cosy = 1 - 2 * (y * y + z * z);
+  const yaw = Math.atan2(siny, cosy) * (180 / Math.PI);
+  return { roll, pitch, yaw };
 }
 
 export function useTelemetry() {
@@ -21,32 +31,27 @@ export function useTelemetry() {
     updateWaypoint,
   } = useContext(WaypointContext);
 
+  const { connected: rosConnected, topics } = useContext(ROSContext);
+  const imuEntry = topics["/mavros/imu/data_raw"];
+  const poseEntry = topics["/mavros/local_position/pose"];
+  const velEntry = topics["/mavros/local_position/velocity_local"];
+  const hasLiveIMU = rosConnected && imuEntry !== undefined;
+
   const [t, setT] = useState(0);
   const [paused, setPaused] = useState(false);
-  const [events, setEvents] = useState([
-    { id: 1, time: "00:00", text: "Mission armed", type: "info" },
-    { id: 2, time: "00:03", text: "GPS lock acquired", type: "success" },
-    { id: 3, time: "00:07", text: "Takeoff complete", type: "success" },
-  ]);
-  const eventId = useRef(4);
-  const lastWP = useRef(0);
 
-  const sensorNoise = useRef({
+  const [sensorNoise, setSensorNoise] = useState({
     altOff: 0,
     speedOff: 0,
     rollOff: 0,
-    gpsSats: 12,
-    signal: -65,
   });
   useEffect(() => {
     const id = setInterval(() => {
-      sensorNoise.current = {
+      setSensorNoise({
         altOff: (Math.random() - 0.5) * 0.4,
         speedOff: (Math.random() - 0.5) * 0.6,
         rollOff: (Math.random() - 0.5) * 2,
-        gpsSats: 12 + Math.round((Math.random() - 0.5) * 2),
-        signal: -65 + Math.round((Math.random() - 0.5) * 8),
-      };
+      });
     }, 500);
     return () => clearInterval(id);
   }, []);
@@ -58,28 +63,6 @@ export function useTelemetry() {
     }, 16);
     return () => clearInterval(id);
   }, [paused]);
-
-  useEffect(() => {
-    if (!waypoints.length) return;
-    const wpIdx = Math.min(
-      Math.floor(t * waypoints.length),
-      waypoints.length - 1,
-    );
-    if (wpIdx > lastWP.current) {
-      lastWP.current = wpIdx;
-      const wp = waypoints[wpIdx];
-      const mins = String(Math.floor(t * 10)).padStart(2, "0");
-      setEvents((prev) => [
-        {
-          id: eventId.current++,
-          time: `00:${mins}`,
-          text: `Reached ${wp.label}`,
-          type: "success",
-        },
-        ...prev.slice(0, 19),
-      ]);
-    }
-  }, [t, waypoints]);
 
   const togglePause = useCallback(() => setPaused((p) => !p), []);
 
@@ -117,11 +100,65 @@ export function useTelemetry() {
   const dx = wpB.coords[0] - wpA.coords[0];
   const dy = wpB.coords[1] - wpA.coords[1];
   const dz = wpB.coords[2] - wpA.coords[2];
-  const sn = sensorNoise.current;
+  const sn = sensorNoise;
   const yaw = Math.atan2(dy, dx) * (180 / Math.PI);
   const speed = Math.sqrt(dx * dx + dy * dy + dz * dz) * 0.8 + sn.speedOff;
   const pitch = Math.atan2(dz, Math.sqrt(dx * dx + dy * dy)) * (180 / Math.PI);
   const roll = Math.sin(t * Math.PI * 8) * 8 + sn.rollOff;
+
+  if (hasLiveIMU) {
+    const imuData = imuEntry.data;
+    const euler = quatToEuler(imuData.orientation);
+
+    const livePos = poseEntry
+      ? {
+          x: poseEntry.data.position.x,
+          y: poseEntry.data.position.y,
+          z: poseEntry.data.position.z,
+        }
+      : pos;
+
+    const liveAlt = poseEntry
+      ? Math.max(0, poseEntry.data.position.z).toFixed(1)
+      : Math.max(0, pos.z + sn.altOff).toFixed(1);
+
+    const liveSpeed = velEntry
+      ? Math.sqrt(
+          velEntry.data.linear.x ** 2 +
+            velEntry.data.linear.y ** 2 +
+            velEntry.data.linear.z ** 2,
+        ).toFixed(1)
+      : Math.max(0, speed).toFixed(1);
+
+    return {
+      t,
+      paused,
+      togglePause,
+      position: livePos,
+      speed: liveSpeed,
+      altitude: liveAlt,
+      attitude: {
+        roll: euler.roll.toFixed(1),
+        pitch: euler.pitch.toFixed(1),
+        yaw: ((euler.yaw + 360) % 360).toFixed(1),
+      },
+      missionProgress: t,
+      currentWaypointIdx: segIdx,
+      waypoints,
+      rawPath,
+      correctedPath,
+      setWaypoints,
+      addWaypoint,
+      removeWaypoint,
+      updateWaypoint,
+      rosConnected: true,
+      imu: {
+        orientation: imuData.orientation,
+        angular_velocity: imuData.angular_velocity,
+        linear_acceleration: imuData.linear_acceleration,
+      },
+    };
+  }
 
   return {
     t,
@@ -135,11 +172,8 @@ export function useTelemetry() {
       pitch: pitch.toFixed(1),
       yaw: ((yaw + 360) % 360).toFixed(1),
     },
-    gpsSats: sn.gpsSats,
-    signalStrength: sn.signal,
     missionProgress: t,
     currentWaypointIdx: segIdx,
-    events,
     waypoints,
     rawPath,
     correctedPath,
@@ -147,5 +181,7 @@ export function useTelemetry() {
     addWaypoint,
     removeWaypoint,
     updateWaypoint,
+    rosConnected: false,
+    imu: null,
   };
 }

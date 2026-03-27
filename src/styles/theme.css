@@ -1,48 +1,50 @@
-@import url("https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;500;600;700&display=swap");
+@font-face {
+  font-family: "Pixelify Sans";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("../assets/fonts/PixelifySans-latin.woff2") format("woff2");
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212,
+    U+2215, U+FEFF, U+FFFD;
+}
 
 :root {
-  /* ── Core palette: violet · blue · cyan ── */
-  --violet: #8b5cf6;
+  --violet: #7c6af0;
   --blue: #3b82f6;
   --cyan: #22d3ee;
   --red: #f87171;
   --white: #ffffff;
 
-  /* Legacy aliases so existing component code still resolves */
   --purple: var(--violet);
   --orange: var(--blue);
   --yellow: var(--cyan);
 
-  /* Plasma gradients — violet → blue */
   --plasma: linear-gradient(135deg, var(--violet) 0%, var(--blue) 100%);
   --plasma-h: linear-gradient(90deg, var(--violet) 0%, var(--blue) 100%);
 
-  /* ── Background — deep dark indigo ── */
   --bg: #07051a;
-  --panel: rgba(139, 92, 246, 0.06);
+  --panel: rgba(255, 255, 255, 0.03);
 
-  /* ── Borders ── */
-  --border: rgba(139, 92, 246, 0.2);
-  --border-orange: rgba(59, 130, 246, 0.35); /* "orange" → blue */
-  --border-purple: rgba(139, 92, 246, 0.4);
+  --border: rgba(255, 255, 255, 0.08);
+  --border-orange: rgba(59, 130, 246, 0.2);
+  --border-purple: rgba(124, 106, 240, 0.28);
 
-  /* ── Text ── */
+  /* Contrast hierarchy: --text for live data values, --text-2 for secondary, --text-3 for labels */
   --text: rgba(255, 255, 255, 0.95);
-  --text-2: rgba(200, 190, 255, 0.6);
-  --text-3: rgba(170, 150, 255, 0.38);
+  --text-2: rgba(220, 215, 255, 0.55);
+  --text-3: rgba(180, 170, 220, 0.32);
 
-  /* ── Glass ── */
-  --blur: blur(24px) saturate(180%);
+  --blur: blur(20px) saturate(150%);
 
-  /* real glass: outer ring + depth shadow + top-edge highlight */
   --shadow:
-    0 0 0 1px var(--border), 0 8px 32px rgba(0, 0, 0, 0.55),
-    inset 0 1px 0 rgba(255, 255, 255, 0.07);
+    0 0 0 1px var(--border), 0 8px 32px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
 
   --shadow-hover:
-    0 0 0 1px var(--border-purple), 0 12px 40px rgba(139, 92, 246, 0.22),
-    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    0 0 0 1px var(--border-purple), 0 12px 40px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
 
-  /* ── Font ── */
   --font: "Pixelify Sans", monospace;
 }
