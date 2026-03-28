@@ -1,13 +1,17 @@
 import json
 
-from ros_bridge.constants.topics import TOPIC_IMU, TOPIC_POSE, TOPIC_VELOCITY, TOPIC_WAYPOINTS, TOPIC_PARAMS
+from ros_bridge.constants.topics import (
+    TOPIC_IMU, TOPIC_POSE, TOPIC_VELOCITY,
+    TOPIC_WAYPOINTS, TOPIC_PARAMS,
+    TOPIC_TRAJECTORY, TOPIC_FOCUS_OBJECT,
+)
 
 try:
     import rclpy
     from rclpy.node import Node
     from rclpy.qos import QoSProfile, ReliabilityPolicy, DurabilityPolicy
     from sensor_msgs.msg import Imu
-    from geometry_msgs.msg import PoseStamped, TwistStamped
+    from geometry_msgs.msg import PoseStamped, TwistStamped, PointStamped
     from nav_msgs.msg import Path
     from std_msgs.msg import String
     _ROS_AVAILABLE = True
@@ -48,6 +52,8 @@ class ROSSubscriber(Node):
         self.create_subscription(Path, TOPIC_WAYPOINTS, self.waypoints_callback, transient_qos)
         self._waypoints_pub = self.create_publisher(Path, TOPIC_WAYPOINTS, transient_qos)
         self._params_pub = self.create_publisher(String, TOPIC_PARAMS, 10)
+        self.create_subscription(Path, TOPIC_TRAJECTORY, self.trajectory_callback, 10)
+        self.create_subscription(PointStamped, TOPIC_FOCUS_OBJECT, self.focus_callback, 10)
 
     def imu_callback(self, msg):
         stamp = msg.header.stamp.sec + msg.header.stamp.nanosec * 1e-9
@@ -92,6 +98,19 @@ class ROSSubscriber(Node):
             },
         }
         self._on_data(TOPIC_VELOCITY, stamp, data)
+
+    def trajectory_callback(self, msg):
+        stamp = msg.header.stamp.sec + msg.header.stamp.nanosec * 1e-9
+        poses = [
+            {"x": p.pose.position.x, "y": p.pose.position.y, "z": p.pose.position.z}
+            for p in msg.poses
+        ]
+        self._on_data(TOPIC_TRAJECTORY, stamp, {"poses": poses})
+
+    def focus_callback(self, msg):
+        stamp = msg.header.stamp.sec + msg.header.stamp.nanosec * 1e-9
+        data = {"x": msg.point.x, "y": msg.point.y, "z": msg.point.z}
+        self._on_data(TOPIC_FOCUS_OBJECT, stamp, data)
 
     def waypoints_callback(self, msg):
         if self._ignore_next_waypoints:

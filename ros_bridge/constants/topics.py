@@ -1,6 +1,8 @@
 TOPIC_IMU       = "/mavros/imu/data_raw"
 TOPIC_WAYPOINTS = "/cine/waypoints"         # nav_msgs/Path — bidirectional
-TOPIC_PARAMS    = "/cine/params"            # std_msgs/String (JSON)
+TOPIC_PARAMS       = "/cine/params"            # std_msgs/String (JSON)
+TOPIC_TRAJECTORY   = "/cine/trajectory"        # nav_msgs/Path   — dense bspline samples
+TOPIC_FOCUS_OBJECT = "/cine/focus_object"      # geometry_msgs/PointStamped
 
 TOPIC_GPS      = "/mavros/global_position/global"
 TOPIC_POSE     = "/mavros/local_position/pose"

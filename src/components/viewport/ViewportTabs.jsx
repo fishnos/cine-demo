@@ -1,87 +1,10 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { VideoFeed } from "./VideoFeed";
-import { MapView } from "./MapView";
-
-const VizPlaceholder = () => (
-  <div
-    style={{
-      width: "100%",
-      height: "100%",
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center",
-      justifyContent: "center",
-      gap: 12,
-      position: "relative",
-    }}
-  >
-    {[
-      {
-        top: 14,
-        left: 14,
-        borderTop: "1.5px solid var(--border-purple)",
-        borderLeft: "1.5px solid var(--border-purple)",
-      },
-      {
-        top: 14,
-        right: 14,
-        borderTop: "1.5px solid var(--border-purple)",
-        borderRight: "1.5px solid var(--border-purple)",
-      },
-      {
-        bottom: 14,
-        left: 14,
-        borderBottom: "1.5px solid var(--border-purple)",
-        borderLeft: "1.5px solid var(--border-purple)",
-      },
-      {
-        bottom: 14,
-        right: 14,
-        borderBottom: "1.5px solid var(--border-purple)",
-        borderRight: "1.5px solid var(--border-purple)",
-      },
-    ].map((s, i) => (
-      <div
-        key={i}
-        style={{ position: "absolute", width: 16, height: 16, ...s }}
-      />
-    ))}
-
-    <div
-      style={{
-        width: 44,
-        height: 44,
-        borderRadius: "50%",
-        background: "rgba(139,92,246,0.10)",
-        border: "1px solid var(--border-purple)",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        fontSize: 18,
-        color: "var(--violet)",
-      }}
-    >
-      ◈
-    </div>
-    <p
-      style={{ fontSize: 11, color: "var(--text-3)", letterSpacing: "0.15em" }}
-    >
-      3D VISUALIZATION
-    </p>
-    <p style={{ fontSize: 9, color: "var(--text-3)", opacity: 0.5 }}>
-      Three.js · Coming soon
-    </p>
-  </div>
-);
+import { DroneScene } from "./DroneScene";
 
 const TABS = ["LIVE", "SPLIT", "3D VIZ"];
 
-export function ViewportTabs({
-  activeTab,
-  onTabChange,
-  telemetry,
-  mlpEnabled,
-}) {
+export function ViewportTabs({ activeTab, onTabChange, telemetry }) {
   return (
     <div
       style={{
@@ -161,12 +84,12 @@ export function ViewportTabs({
                 }}
               />
               <div style={{ flex: 1, overflow: "hidden" }}>
-                <VizPlaceholder />
+                <DroneScene telemetry={telemetry} />
               </div>
             </div>
           )}
 
-          {activeTab === "3D VIZ" && <VizPlaceholder />}
+          {activeTab === "3D VIZ" && <DroneScene telemetry={telemetry} />}
         </motion.div>
       </AnimatePresence>
     </div>
