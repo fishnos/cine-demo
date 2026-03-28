@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useTelemetry } from "@/hooks/useTelemetry";
+import { useROS } from "@/contexts/ROSContext";
 import { Header } from "@/components/layout/Header";
 import { MissionSidebar } from "@/components/layout/MissionSidebar";
 import { TelemetryPanel } from "@/components/layout/TelemetryPanel";
@@ -14,6 +15,12 @@ const Dashboard = () => {
   const [altCeiling, setAltCeiling] = useState(50);
 
   const telemetry = useTelemetry();
+  const { publish, connected: rosConnected } = useROS();
+
+  useEffect(() => {
+    if (!rosConnected) return;
+    publish("/cine/params", { mlpEnabled, speedLimit, altCeiling });
+  }, [mlpEnabled, speedLimit, altCeiling, rosConnected, publish]);
 
   return (
     <motion.div

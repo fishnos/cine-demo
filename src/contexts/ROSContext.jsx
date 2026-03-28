@@ -14,6 +14,7 @@ const RECONNECT_DELAY_MS = 3000;
 export const ROSContext = createContext({
   connected: false,
   topics: {},
+  publish: () => {},
 });
 
 export function ROSProvider({ children }) {
@@ -71,8 +72,14 @@ export function ROSProvider({ children }) {
     };
   }, [connect]);
 
+  const publish = useCallback((topic, data) => {
+    if (wsRef.current?.readyState === WebSocket.OPEN) {
+      wsRef.current.send(JSON.stringify({ type: "publish", topic, data }));
+    }
+  }, []);
+
   return (
-    <ROSContext.Provider value={{ connected, topics }}>
+    <ROSContext.Provider value={{ connected, topics, publish }}>
       {children}
     </ROSContext.Provider>
   );

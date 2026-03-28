@@ -1,10 +1,15 @@
-from ros_bridge.constants.topics import TOPIC_IMU, TOPIC_POSE, TOPIC_VELOCITY
+import json
+
+from ros_bridge.constants.topics import TOPIC_IMU, TOPIC_POSE, TOPIC_VELOCITY, TOPIC_WAYPOINTS, TOPIC_PARAMS
 
 try:
     import rclpy
     from rclpy.node import Node
+    from rclpy.qos import QoSProfile, ReliabilityPolicy, DurabilityPolicy
     from sensor_msgs.msg import Imu
     from geometry_msgs.msg import PoseStamped, TwistStamped
+    from nav_msgs.msg import Path
+    from std_msgs.msg import String
     _ROS_AVAILABLE = True
 except ImportError:
     _ROS_AVAILABLE = False
@@ -13,6 +18,8 @@ except ImportError:
             pass
         def create_subscription(self, *args, **kwargs):
             pass
+        def create_publisher(self, *args, **kwargs):
+            return None
         def destroy_node(self):
             pass
 
@@ -20,6 +27,9 @@ except ImportError:
 class ROSSubscriber(Node):
     def __init__(self, on_data, _skip_rclpy=False):
         self._on_data = on_data
+        self._ignore_next_waypoints = False
+        self._waypoints_pub = None
+        self._params_pub = None
         if not _skip_rclpy:
             super().__init__("cine_dashboard_subscriber")
             self._setup_subscriptions()
@@ -30,6 +40,14 @@ class ROSSubscriber(Node):
         self.create_subscription(Imu, TOPIC_IMU, self.imu_callback, 10)
         self.create_subscription(PoseStamped, TOPIC_POSE, self.pose_callback, 10)
         self.create_subscription(TwistStamped, TOPIC_VELOCITY, self.velocity_callback, 10)
+        transient_qos = QoSProfile(
+            reliability=ReliabilityPolicy.RELIABLE,
+            durability=DurabilityPolicy.TRANSIENT_LOCAL,
+            depth=1,
+        )
+        self.create_subscription(Path, TOPIC_WAYPOINTS, self.waypoints_callback, transient_qos)
+        self._waypoints_pub = self.create_publisher(Path, TOPIC_WAYPOINTS, transient_qos)
+        self._params_pub = self.create_publisher(String, TOPIC_PARAMS, 10)
 
     def imu_callback(self, msg):
         stamp = msg.header.stamp.sec + msg.header.stamp.nanosec * 1e-9
@@ -74,3 +92,39 @@ class ROSSubscriber(Node):
             },
         }
         self._on_data(TOPIC_VELOCITY, stamp, data)
+
+    def waypoints_callback(self, msg):
+        if self._ignore_next_waypoints:
+            self._ignore_next_waypoints = False
+            return
+        poses = [
+            {
+                "x": p.pose.position.x,
+                "y": p.pose.position.y,
+                "z": p.pose.position.z,
+            }
+            for p in msg.poses
+        ]
+        self._on_data(TOPIC_WAYPOINTS, 0.0, {"poses": poses})
+
+
+    def publish_params(self, data):
+        if not _ROS_AVAILABLE or self._params_pub is None:
+            return
+        msg = String()
+        msg.data = json.dumps(data)
+        self._params_pub.publish(msg)
+
+    def publish_waypoints(self, positions):
+        if not _ROS_AVAILABLE or self._waypoints_pub is None:
+            return
+        msg = Path()
+        for pos in positions:
+            ps = PoseStamped()
+            ps.pose.position.x = float(pos.get("x", 0.0))
+            ps.pose.position.y = float(pos.get("y", 0.0))
+            ps.pose.position.z = float(pos.get("z", 0.0))
+            ps.pose.orientation.w = 1.0
+            msg.poses.append(ps)
+        self._ignore_next_waypoints = True
+        self._waypoints_pub.publish(msg)

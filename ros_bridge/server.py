@@ -11,12 +11,13 @@ except ImportError as exc:
 
 import websockets
 
-from ros_bridge.constants.topics import WS_PORT
+from ros_bridge.constants.topics import WS_PORT, TOPIC_WAYPOINTS, TOPIC_PARAMS
 from ros_bridge.subscriber import ROSSubscriber
 
 _clients: set = set()
 
 _loop: asyncio.AbstractEventLoop | None = None
+_node: ROSSubscriber | None = None
 
 
 async def _broadcast(payload: str) -> None:
@@ -39,7 +40,18 @@ def _on_ros_data(topic: str, stamp: float, data: dict) -> None:
 async def _handler(websocket) -> None:
     _clients.add(websocket)
     try:
-        await websocket.wait_closed()
+        async for raw in websocket:
+            try:
+                msg = json.loads(raw)
+            except json.JSONDecodeError:
+                continue
+            if msg.get("type") == "publish" and _node is not None:
+                topic = msg.get("topic")
+                data = msg.get("data", {})
+                if topic == TOPIC_WAYPOINTS:
+                    _node.publish_waypoints(data.get("poses", []))
+                elif topic == TOPIC_PARAMS:
+                    _node.publish_params(data)
     finally:
         _clients.discard(websocket)
 
@@ -55,9 +67,10 @@ def _spin_ros(node: ROSSubscriber) -> None:
 
 
 def main() -> None:
-    global _loop
+    global _loop, _node
     rclpy.init()
     node = ROSSubscriber(on_data=_on_ros_data)
+    _node = node
 
     _loop = asyncio.new_event_loop()
     asyncio.set_event_loop(_loop)

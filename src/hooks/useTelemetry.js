@@ -1,4 +1,11 @@
-import { useState, useEffect, useCallback, useContext, useMemo } from "react";
+import {
+  useState,
+  useEffect,
+  useCallback,
+  useContext,
+  useMemo,
+  useRef,
+} from "react";
 import { WaypointContext } from "../contexts/WaypointContext";
 import { ROSContext } from "../contexts/ROSContext";
 
@@ -31,11 +38,43 @@ export function useTelemetry() {
     updateWaypoint,
   } = useContext(WaypointContext);
 
-  const { connected: rosConnected, topics } = useContext(ROSContext);
+  const { connected: rosConnected, topics, publish } = useContext(ROSContext);
   const imuEntry = topics["/mavros/imu/data_raw"];
   const poseEntry = topics["/mavros/local_position/pose"];
   const velEntry = topics["/mavros/local_position/velocity_local"];
+  const waypointEntry = topics["/cine/waypoints"];
   const hasLiveIMU = rosConnected && imuEntry !== undefined;
+
+  const fromROSRef = useRef(false);
+
+  useEffect(() => {
+    if (!waypointEntry) return;
+    const poses = waypointEntry.data?.poses ?? [];
+    if (poses.length === 0) return;
+    fromROSRef.current = true;
+    setWaypoints(
+      poses.map((p, i) => ({
+        id: i + 1,
+        label: `WP${i + 1}`,
+        coords: [p.x, p.y, p.z ?? 0],
+      })),
+    );
+  }, [waypointEntry, setWaypoints]);
+
+  useEffect(() => {
+    if (!rosConnected) return;
+    if (fromROSRef.current) {
+      fromROSRef.current = false;
+      return;
+    }
+    publish("/cine/waypoints", {
+      poses: waypoints.map((w) => ({
+        x: w.coords[0],
+        y: w.coords[1],
+        z: w.coords[2] ?? 0,
+      })),
+    });
+  }, [waypoints, rosConnected, publish]);
 
   const [t, setT] = useState(0);
   const [paused, setPaused] = useState(false);
